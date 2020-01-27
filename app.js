@@ -44,3 +44,52 @@ const viewRoles = () => {
 const viewEmployees = () => {
 // function to view a list of all employees
 }
+
+const exit = () => {
+    console.log(`Thank you for using our program today.`)
+    connection.end();
+}
+
+const mainMenu = () => {
+    console.log(`Please choose from the following options:`)
+    inquirer.prompt([
+        {
+            message: "View departments breakdown",
+            name: "viewdepts"
+        },
+        {
+            message: "View role breakdown",
+            name: "viewroles"
+        },
+        {
+            message: "View employee breakdown",
+            name: "viewemps"
+        },
+        {
+            message: "Add a department",
+            name: "adddepts"
+        },
+        {
+            message: "Add a role",
+            name: "addrole"
+        },
+        {
+            message: "Add an employee",
+            name: "addemp"
+        },
+        {
+            message: "Update an employee",
+            name: "updateemp"
+        }
+        {
+            message: "Exit",
+            name: "exit"
+        }
+    ])
+}
+
+connection.connect((err) => {
+    if (err) throw err;
+    console.log(`Now connected as id ${connection.threadId}`)
+    mainMenu();
+})
