@@ -54,38 +54,34 @@ const mainMenu = () => {
     console.log(`Please choose from the following options:`)
     inquirer.prompt([
         {
-            message: "View departments breakdown",
-            name: "viewdepts"
-        },
-        {
-            message: "View role breakdown",
-            name: "viewroles"
-        },
-        {
-            message: "View employee breakdown",
-            name: "viewemps"
-        },
-        {
-            message: "Add a department",
-            name: "adddepts"
-        },
-        {
-            message: "Add a role",
-            name: "addrole"
-        },
-        {
-            message: "Add an employee",
-            name: "addemp"
-        },
-        {
-            message: "Update an employee",
-            name: "updateemp"
+            message: "Please choose from the following options:",
+            name: "userchoice",
+            type: "rawlist",
+            choices: ["View departments breakdown", "View role breakdown", "View employee breakdown", "Add a department", "Add a role", "Add an employee", "Update an employee", "Exit"]
         }
-        {
-            message: "Exit",
-            name: "exit"
+    ]).then(answers => {
+        switch (answers.userchoice) {
+            case "View departments breakdown":
+                break;
+            case "View role breakdown":
+                break;
+            case "View employee breakdown":
+                break;
+            case "Add a department":
+                break;
+            case "Add a role":
+                break;
+            case "Add an employee":
+                break;
+            case "Update an employee":
+                break;
+            case "Exit":
+                exit();
+                break;
+            default:
+                break;
         }
-    ])
+    })
 }
 
 connection.connect((err) => {
