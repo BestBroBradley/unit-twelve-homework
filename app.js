@@ -8,9 +8,42 @@ const connection = mysql.createConnection({
     database: 'roster_db'
 });
 
+// Turn into a promise returning an array
+
+const generateDepts = () => {
+    return new Promise(function(resolve, reject) {
+        connection.query("SELECT * FROM department", (err, results) => {
+        deptArray = []
+        if (err) {
+            return reject(err)
+        };
+
+        for (const result of results) {
+            deptArray.push(result.name)
+        }
+        return resolve(deptArray)
+    })
+    })
+}
+
+const generateRoles = () => {
+    return new Promise(function(resolve, reject) {
+        connection.query("SELECT * FROM role", (err, results) => {
+        roleArray = []
+        if (err) {
+            return reject(err)
+        };
+
+        for (const result of results) {
+            roleArray.push(result.title)
+        }
+        return resolve(roleArray)
+    })
+    })
+}
 
 const addDepartment = (data) => {
-    // function to add new department
+    // function to add new department - COMPLETE
     console.log(data)
     connection.query(`INSERT INTO department(name) VALUES (?)`, [data.newdept], (err, results) => {
         if (err) throw err;
@@ -20,19 +53,20 @@ const addDepartment = (data) => {
 }
 
 const addDepartmentQs = () => {
-    // function to call up list of inquirer questions to add department
+    // function to call up list of inquirer questions to add department - COMPLETE
 
     inquirer.prompt([
         {
             message: "What department would you like to add?",
             name: "newdept"
         },
-    ]).then (function(response) {
+    ]).then(function (response) {
         addDepartment(response)
     })
 }
 
 const addRole = (data) => {
+    // function to add new role - COMPLETE
     let deptID
     connection.query("SELECT * FROM department", (err, results) => {
         if (err) throw err;
@@ -49,43 +83,63 @@ const addRole = (data) => {
     })
 }
 
-const addRoleQs = () => {
-    // function to call up list of inquirer questions to add role
+const addRoleQs = async () => {
+    // function to call up list of inquirer questions to add role - COMPLETE
+    let deptArray = await generateDepts();
+    inquirer.prompt([
+        {
+            message: "Which department would you like to add a role to?",
+            name: "department",
+            type: "list",
+            choices: deptArray,
+        },
+        {
+            message: "What role would you like to add?",
+            name: "title"
+        },
+        {
+            message: "What salary would you like to attach to this role?",
+            name: "salary"
 
-    const choicesArray = []
-    connection.query("SELECT * FROM department", (err, results) => {
-        if (err) throw err;
-        for (const result of results) {
-            choicesArray.push(result.name)
         }
-        inquirer.prompt([
-            {
-                message: "Which department would you like to add a role to?",
-                name: "department",
-                type: "list",
-                choices: choicesArray,
-            },
-            {
-                message: "What role would you like to add?",
-                name: "title"
-            },
-            {
-                message: "What salary would you like to attach to this role?",
-                name: "salary"
-
-            }
-        ]).then((response) => {
-            addRole(response);
-        })
+    ]).then((response) => {
+        addRole(response);
     })
 }
 
 const addEmployee = (data) => {
     // function to add new employee
+console.log(`Got here successfully`)
 }
 
-const addEmployeeQs = () => {
+const addEmployeeQs = async () => {
     // function to call of list of inquirer questions to add employee
+    let deptArray = await generateDepts()
+    let roleArray = await generateRoles()
+    inquirer.prompt([
+        {
+            message: "Into which department would you like to add this employee?",
+            name: "department",
+            type: "list",
+            choices: deptArray
+        },
+        {
+            message: "What is this employee's role?",
+            name: "role",
+            type: "list",
+            choices: roleArray
+        },
+        {
+            message: "Please provide employee's first name.",
+            name: "first_name"
+        },
+        {
+            message: "Please provide employee's last name.",
+            name: "last_name"
+        }
+    ]).then((response) => {
+        addEmployee(response)
+    })
 }
 
 const updateEmployee = () => {
@@ -122,6 +176,15 @@ const viewRoles = () => {
 }
 
 const viewEmployees = () => {
+    connection.query("SELECT * FROM employee", (err, results) => {
+        if (err) throw err;
+        console.log(`Current Employee Listing By Department:\n`)
+        for (const result of results) {
+            console.log(`${result.id} | ${result.first_name} ${result.last_name} | ${result.role} | ${result.department}`)
+        }
+        console.log(`\n`)
+        menuReturn();
+    })
     // function to view a list of all employees
 }
 

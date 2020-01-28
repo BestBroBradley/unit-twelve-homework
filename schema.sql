@@ -21,13 +21,13 @@ CREATE TABLE employee (
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     role_id INTEGER,
-    manager_id INTEGER
+    department_id INTEGER,
 );
 
 INSERT INTO department (name)
 VALUES ("Sales"), ("Engineering"), ("Finance"), ("Legal");
 
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
+INSERT INTO employee (first_name, last_name, role_id, department_id)
 VALUES ("John", "Smith", 2, 3);
 
 INSERT INTO role (title, salary, department_id)
