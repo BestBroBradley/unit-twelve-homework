@@ -11,10 +11,25 @@ const connection = mysql.createConnection({
 
 const addDepartment = (data) => {
     // function to add new department
+    console.log(data)
+    connection.query(`INSERT INTO department(name) VALUES (?)`, [data.newdept], (err, results) => {
+        if (err) throw err;
+        console.log(`\nSuccessfully added ${data.newdept} to the directory.\n`)
+        menuReturn();
+    })
 }
 
 const addDepartmentQs = () => {
     // function to call up list of inquirer questions to add department
+
+    inquirer.prompt([
+        {
+            message: "What department would you like to add?",
+            name: "newdept"
+        },
+    ]).then (function(response) {
+        addDepartment(response)
+    })
 }
 
 const addRole = (data) => {
@@ -29,7 +44,7 @@ const addRole = (data) => {
     })
     connection.query(`INSERT INTO role (title, salary, department, department_id) VALUES (?, ?, ?, ?)`, [data.title, data.salary, data.department, deptID], (err, results) => {
         if (err) throw err;
-        console.log(`\nSuccessfully added ${data.title}\n`)
+        console.log(`\nSuccessfully added ${data.title} to the role directory.\n`)
         menuReturn();
     })
 }
