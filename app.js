@@ -109,6 +109,17 @@ const addRoleQs = async () => {
 
 const addEmployee = (data) => {
     // function to add new employee
+    let dept_id
+    let role_id
+    connection.query("SELECT * FROM department", (err, results) => {
+        if (err) throw err;
+        for (const result of results) {
+            if (result.name === data.department) {
+                dept_id = result.id
+            }
+        }
+    })
+    
 console.log(`Got here successfully`)
 }
 
