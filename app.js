@@ -10,6 +10,22 @@ const connection = mysql.createConnection({
 
 // Turn into a promise returning an array
 
+const generateEmployees = () => {
+    return new Promise(function (resolve, reject) {
+        connection.query("SELECT * FROM employee", (err, results) => {
+            employeeArray = []
+            if (err) {
+                return reject(err)
+            };
+
+            for (const result of results) {
+                employeeArray.push(result.first_name + " " + result.last_name)
+            }
+            return resolve(employeeArray)
+        })
+    })
+}
+
 const generateDepts = () => {
     return new Promise(function (resolve, reject) {
         connection.query("SELECT * FROM department", (err, results) => {
@@ -184,11 +200,55 @@ const addEmployeeQs = async () => {
     })
 }
 
-const updateEmployee = () => {
+const updateEmployee = (data) => {
     // function to update an employee    
+
+    console.log(data)
 }
 
-const updateEmployeeQs = () => {
+const updateEmployeeQs = async () => {
+    let employeeArray = await generateEmployees()
+    let deptArray = await generateDepts()
+    let roleArray = await generateRoles()
+    inquirer.prompt([
+        {
+            message: "Which employee would you like to update?",
+            name: "employee",
+            type: "list",
+            choices: employeeArray
+        },
+        {
+            message: "What would you like to update?",
+            name: "userchoice",
+            type: "list",
+            choices: ["Department", "Role"]
+        },
+    ]).then((response) => {
+        if (response.userchoice === "Department") {
+            inquirer.prompt([
+                {
+                    message: "What department would you like to assign?",
+                    name: "newdepartment",
+                    type: "list",
+                    choices: deptArray
+                }
+            ]).then((response) => {
+                updateEmployee(response)
+            })
+        } else {
+            inquirer.prompt([
+                {
+                    message: "What role would you like to assign?",
+                    name: "newrole",
+                    type: "list",
+                    choices: roleArray
+                }
+            ]).then((response) => {
+                updateEmployee(response)
+            })
+        }
+
+    })
     // function to call list of inquirer questions to update employee
 }
 

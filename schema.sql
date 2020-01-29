@@ -13,6 +13,7 @@ CREATE TABLE role (
 	id INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY,
     title VARCHAR(40) NOT NULL,
     salary INTEGER,
+    department VARCHAR(40) NOT NULL,
     department_id INTEGER
 );
 
