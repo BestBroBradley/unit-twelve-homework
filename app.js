@@ -200,11 +200,25 @@ const addEmployeeQs = async () => {
     })
 }
 
-const updateEmployee = (data) => {
+const updateEmployee = ((data, prevData) => {
     // function to update an employee    
-
-    console.log(data)
-}
+    const name = prevData.employee.split(' ')
+    const first_name = name[0]
+    const last_name = name[1]
+    if (!data.newrole) {
+        connection.query("UPDATE employee SET department = ? WHERE first_name = ? AND last_name = ?", [data.newdepartment, first_name, last_name], (err, results) => {
+            if (err) throw err;
+            console.log(`\nSuccessfully updated ${prevData.employee}.\n`)
+            menuReturn();
+        })
+    } else if (!data.newdepartment) {
+        connection.query("UPDATE employee SET role = ? WHERE first_name = ? AND last_name = ?", [data.newrole, first_name, last_name], (err, results) => {
+            if (err) throw err;
+            console.log(`\nSuccessfully updated ${prevData.employee}.\n`)
+            menuReturn();
+        })
+    }
+})
 
 const updateEmployeeQs = async () => {
     let employeeArray = await generateEmployees()
@@ -224,6 +238,7 @@ const updateEmployeeQs = async () => {
             choices: ["Department", "Role"]
         },
     ]).then((response) => {
+        let prevData = response
         if (response.userchoice === "Department") {
             inquirer.prompt([
                 {
@@ -233,7 +248,7 @@ const updateEmployeeQs = async () => {
                     choices: deptArray
                 }
             ]).then((response) => {
-                updateEmployee(response)
+                updateEmployee(response, prevData)
             })
         } else {
             inquirer.prompt([
@@ -244,7 +259,7 @@ const updateEmployeeQs = async () => {
                     choices: roleArray
                 }
             ]).then((response) => {
-                updateEmployee(response)
+                updateEmployee(response, prevData)
             })
         }
 
