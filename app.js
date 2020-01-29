@@ -11,37 +11,72 @@ const connection = mysql.createConnection({
 // Turn into a promise returning an array
 
 const generateDepts = () => {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         connection.query("SELECT * FROM department", (err, results) => {
-        deptArray = []
-        if (err) {
-            return reject(err)
-        };
+            deptArray = []
+            if (err) {
+                return reject(err)
+            };
 
-        for (const result of results) {
-            deptArray.push(result.name)
-        }
-        return resolve(deptArray)
-    })
+            for (const result of results) {
+                deptArray.push(result.name)
+            }
+            return resolve(deptArray)
+        })
     })
 }
 
 const generateRoles = () => {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         connection.query("SELECT * FROM role", (err, results) => {
-        roleArray = []
-        if (err) {
-            return reject(err)
-        };
+            roleArray = []
+            if (err) {
+                return reject(err)
+            };
 
-        for (const result of results) {
-            roleArray.push(result.title)
-        }
-        return resolve(roleArray)
-    })
+            for (const result of results) {
+                roleArray.push(result.title)
+            }
+            return resolve(roleArray)
+        })
     })
 }
 
+const generateDeptID = (data) => {
+    return new Promise(function (resolve, reject) {
+        connection.query("SELECT * FROM department", (err, results) => {
+            let dept_id = 0
+            if (err) {
+                return reject(err)
+            };
+
+            for (const result of results) {
+                if (result.name === data.department) {
+                    dept_id = result.id
+                }
+            }
+            return resolve(dept_id);
+        })
+    })
+}
+
+const generateRoleID = (data) => {
+    return new Promise(function (resolve, reject) {
+        connection.query("SELECT * FROM role", (err, results) => {
+            let role_id = 0
+            if (err) {
+                return reject(err)
+            }
+
+            for (const result of results) {
+                if (result.title === data.role) {
+                    role_id = result.id
+                }
+            }
+            return resolve(role_id)
+        })
+    })
+}
 const addDepartment = (data) => {
     // function to add new department - COMPLETE
     console.log(data)
@@ -107,24 +142,20 @@ const addRoleQs = async () => {
     })
 }
 
-const addEmployee = (data) => {
+const addEmployee = async (data) => {
     // function to add new employee
-    let dept_id
-    let role_id
-    connection.query("SELECT * FROM department", (err, results) => {
+    console.log(data)
+    let dept_id = await generateDeptID(data)
+    let role_id = await generateRoleID(data)
+    connection.query(`INSERT INTO employee (first_name, last_name, role, department, role_id, department_id) VALUES (?, ?, ?, ?, ?, ?)`, [data.first_name, data.last_name, data.role, data.department, role_id, dept_id], (err, results) => {
         if (err) throw err;
-        for (const result of results) {
-            if (result.name === data.department) {
-                dept_id = result.id
-            }
-        }
+        console.log(`\nSuccessfully added ${data.first_name} ${data.last_name} to the employee directory.\n`)
+        menuReturn();
     })
-    
-console.log(`Got here successfully`)
 }
 
 const addEmployeeQs = async () => {
-    // function to call of list of inquirer questions to add employee
+    // function to call of list of inquirer questions to add employee - COMPLETE
     let deptArray = await generateDepts()
     let roleArray = await generateRoles()
     inquirer.prompt([
